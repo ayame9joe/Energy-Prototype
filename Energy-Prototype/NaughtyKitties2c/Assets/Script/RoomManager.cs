@@ -4,13 +4,16 @@ using UnityEngine.UI;
 
 public class RoomManager : MonoBehaviour {
 
-	float value = 0;
+	public float value = 0;
 	public float minVal = 0;
 	public enum Type {Energy, Attack, Repair, Enpower};
 	public Type type;
 	public Text txtValue;
 	public Text txtName;
+	public Text txtLevel;
 
+	bool isLevelingUp = false;
+	float level = 0;
 
 	// Use this for initialization
 	void Start () {
@@ -41,13 +44,16 @@ public class RoomManager : MonoBehaviour {
 		}
 
 		txtName.text = type.ToString ();
+
+		txtLevel.text = "Level: " + level.ToString ();
 		//if (value > 0.5f)value-= 0.5f;
+
 
 
 
 	}
 
-	public void CheckVal ()
+	void CheckVal ()
 	{
 		/*if (value > minVal) {
 			
@@ -125,9 +131,6 @@ public class RoomManager : MonoBehaviour {
 
 
 
-			CheckVal ();
-			RandomlyHarming ();
-			Attack ();
 		}
 
 	}
@@ -140,9 +143,18 @@ public class RoomManager : MonoBehaviour {
 
 
 
+		}
+	}
+
+	public void LvUp ()
+	{
+		GameManager.totalEnergy -= this.value;
+
+		level += this.value;
+		for (int i = 0; i < level + 1; i++) {
 			CheckVal ();
-			RandomlyHarming ();
-			Attack ();
+
+			//--Todo：玩家不能操作；效能提升
 		}
 	}
 
@@ -153,10 +165,14 @@ public class RoomManager : MonoBehaviour {
 			GameManager.hp -= Random.Range(5, 20);
 		}
 	}
-
+	
 	void Attack ()
 	{
 		GameManager.enemy -= GameManager.dps / (GameManager.dps + 1);
 		//GameManager.dps 
 	}
+
+
+
+
 }
