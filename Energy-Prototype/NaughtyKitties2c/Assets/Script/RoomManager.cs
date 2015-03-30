@@ -14,6 +14,7 @@ public class RoomManager : MonoBehaviour {
 
 	bool isLevelingUp = false;
 	float level = 0;
+	public Toggle newToggle;
 
 	// Use this for initialization
 	void Start () {
@@ -160,7 +161,7 @@ public class RoomManager : MonoBehaviour {
 
 	void RandomlyHarming ()
 	{
-		Debug.Log("Attacked by Enemies");
+		//Debug.Log("Attacked by Enemies");
 		if (Random.Range (0, 100) < 30) {
 			GameManager.hp -= Random.Range(5, 20);
 		}
@@ -170,6 +171,55 @@ public class RoomManager : MonoBehaviour {
 	{
 		GameManager.enemy -= GameManager.dps / (GameManager.dps + 1);
 		//GameManager.dps 
+	}
+
+
+	public void MewChanged (bool isPut)
+	{
+		if (newToggle.isOn) {
+			switch (type) {
+			case Type.Attack:
+				GameManager.isAttack = true;
+				break;
+			case Type.Energy:
+				GameManager.isEnergy = true;
+				break;
+			case Type.Enpower:
+				GameManager.isEnpower = true;
+				break;
+			case Type.Repair:
+				GameManager.isRepair = true;
+				break;
+			}
+		} else {
+			switch (type) {
+			case Type.Attack:
+				if (GameManager.attackVal > 0)
+				{
+					GameManager.isAttack = false;
+				}
+				break;
+			case Type.Energy:
+				if (GameManager.energyVal > 0)
+				{
+					GameManager.isEnergy = false;
+				}
+				break;
+			case Type.Enpower:
+				if (GameManager.enpowerVal > 0)
+				{
+					GameManager.isEnpower = false;
+				}
+				break;
+			case Type.Repair:
+				if (GameManager.repairVal > 0)
+				{
+					GameManager.isRepair = false;
+				}
+				break;
+			}
+		
+		}
 	}
 
 

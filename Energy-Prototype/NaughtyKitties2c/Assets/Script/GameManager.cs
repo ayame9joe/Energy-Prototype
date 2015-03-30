@@ -14,6 +14,9 @@ public class GameManager : MonoBehaviour {
 	public static bool isTurnEnd;
 	public static float turn;
 
+	public static bool isCatTurnEnd;
+	public static float catTurn;
+
 	// --- UI ---
 
 	public Text txtTotalEnergy;
@@ -21,11 +24,25 @@ public class GameManager : MonoBehaviour {
 	public Text txtHp;
 	public Text txtEnemy;
 	public Text txtTurn;
+	public Text txtCatTurn;
 
-
+	public Text txtAttackVal;
+	public Text txtEnergyVal;
+	public Text txtEnpowerVal;
+	public Text txtRepairVal;
 
 
 	public GameObject panelReplay;
+
+	public static bool isAttack;
+	public static bool isEnergy;
+	public static bool isRepair;
+	public static bool isEnpower;
+	// --- Values ---
+	public static float attackVal;
+	public static float energyVal;
+	public static float repairVal;
+	public static float enpowerVal;
 	// Use this for initialization
 	void Start () {
 	
@@ -39,6 +56,12 @@ public class GameManager : MonoBehaviour {
 		txtHp.text = "HP: " + hp.ToString ();
 		txtEnemy.text = "Enemy: " + enemy.ToString ();
 		txtTurn.text = "Turns: " + turn.ToString ();
+		txtCatTurn.text = "Cat Turns: " + catTurn.ToString ();
+
+		txtAttackVal.text = "Attack: " + attackVal.ToString ();
+		txtEnergyVal.text = "Energy: " + energyVal.ToString ();
+		txtRepairVal.text = "Repair: " + repairVal.ToString ();
+		txtEnpowerVal.text = "Enpower: " + enpowerVal.ToString ();
 
 		if (isTurnEnd) {
 
@@ -46,6 +69,14 @@ public class GameManager : MonoBehaviour {
 			RandomlyHarming();
 			Attack();
 			isTurnEnd = false;
+		}
+
+		if (isCatTurnEnd) {
+			
+			CheckVal();
+			RandomlyHarming();
+			Attack();
+			isCatTurnEnd = false;
 		}
 
 	
@@ -74,43 +105,8 @@ public class GameManager : MonoBehaviour {
 
 	void CheckVal ()
 	{
-		//Debug.Log(GameObject.Find ("Attack").GetComponent<RoomManager> ().value);
-		/*if (value > minVal) {
-			
-			switch (type) {
-			case Type.Attack:
-				GameManager.dps++;
-				break;
-			case Type.Energy:
-				GameManager.totalEnergy+=2;
-				break;
-			case Type.Enpower:
-				
-				break;
-			case Type.Repair:
-				GameManager.hp++;
-				break;
-			}
-			
-		} else {
-			switch (type) {
-			case Type.Attack:
-				if (GameManager.dps > 1)
-				{
-					GameManager.dps--;
-				}
-				break;
-			case Type.Energy:
-				GameManager.totalEnergy-= 2;
-				break;
-			case Type.Enpower:
-				
-				break;
-			case Type.Repair:
-				GameManager.hp++;
-				break;
-			}
-		}*/
+
+
 		GameManager.dps = GameObject.Find ("Attack").GetComponent<RoomManager> ().value;
 		GameManager.totalEnergy += GameObject.Find ("Energy").GetComponent<RoomManager> ().value * .5f;
 		if (GameObject.Find ("Enpower").GetComponent<RoomManager> ().value > GameObject.Find ("Enpower").GetComponent<RoomManager> ().minVal)
@@ -123,11 +119,50 @@ public class GameManager : MonoBehaviour {
 		{
 			GameManager.hp += 5 * GameObject.Find ("Repair").GetComponent<RoomManager> ().value;
 		}
+
+		/*GameManager.dps = attackVal;
+		GameManager.totalEnergy += energyVal * .5f;
+		if (enpowerVal > 3)
+		{
+			enpowerVal -= 3;
+			GameManager.totalEnergy += 3;
+			GameManager.enemy -= 5;
+		}	
+		if (GameManager.hp < 100)
+		{
+			GameManager.hp += 5 * repairVal;
+		}*/
 	}
 
 	public void EndTurn ()
 	{
 		isTurnEnd = true;
 		turn++;
+	}
+
+	public void EndCatTurn ()
+	{
+		if (isAttack) {
+			attackVal++;
+		} else {
+			attackVal--;
+		}
+		if (isEnergy) {
+			energyVal++;
+		} else {
+			energyVal--;
+		}
+		if (isEnpower) {
+			enpowerVal++;
+		} else {
+			enpowerVal--;
+		}
+		if (isRepair) {
+			repairVal++;
+		} else {
+			repairVal--;
+		}
+		isCatTurnEnd = true;
+		catTurn++;
 	}
 }
