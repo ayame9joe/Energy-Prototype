@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour {
 	public static float hp = 100;
 	public static float dps;
 	public static float enemy = 20;
-	public static float totalEnergy = 5;
+	public static float tempEnergy = 5;
 
 	public static float attackVal;
 	public static float energyVal;
@@ -23,11 +23,15 @@ public class GameManager : MonoBehaviour {
 
 	public static float autoEnergyTurn;
 
+	public static float numOfCats;
+
+	float totalEnergyVal;
+
 	//public static float autoCatTurn;
 
 	// --- UI ---
 
-	public Text txtTotalEnergy;
+	public Text txttempEnergy;
 	public Text txtDps;
 	public Text txtHp;
 	public Text txtEnemy;
@@ -44,6 +48,16 @@ public class GameManager : MonoBehaviour {
 
 	public Toggle autoTurnEndTog;
 
+	public Text txtBeingAttacked;
+	public Text txtHarming;
+	public Text txtEncharging;
+	public Text txtEnpower;
+
+	public Text txtResult;
+
+	public Image imgUs;
+	public Image imgEnemy;
+
 	//--- Boolen ---
 	public static bool isAttack;
 	public static bool isEnergy;
@@ -54,6 +68,8 @@ public class GameManager : MonoBehaviour {
 	public static bool isCatMode;
 	public static bool autoEndTurn;
 
+	bool textClear;
+
 	//--- Panels ---
 	public GameObject ModePanel;
 	public GameObject GamePanel;
@@ -63,12 +79,23 @@ public class GameManager : MonoBehaviour {
 	void Start () {
 
 		GamePanel.SetActive (false);
+
+		txtBeingAttacked.text = "";
+		txtHarming.text = "";
+		txtEnpower.text = "";
+		txtEncharging.text = "";
 	
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
+		if (textClear) {
+			textClear = false;
+			txtResult.text.IsNormalized();
+		}
+
+		numOfCats = GameObject.FindGameObjectsWithTag ("Cat").Length;
 		ShowUI ();
 
 		if (autoEndTurn && GameObject.Find("Gos")) {
@@ -92,7 +119,109 @@ public class GameManager : MonoBehaviour {
 			}
 			
 			if (isCatTurnEnd) {
+
+				/*if (tempEnergy < totalEnergyVal && totalEnergyVal > 1) {
+					totalEnergyVal--;
+				}*/
+
+				imgUs.rectTransform.sizeDelta = new Vector2 (
+					imgUs.rectTransform.sizeDelta.x, hp / 100 * 100);
+				imgEnemy.rectTransform.sizeDelta = new Vector2 (
+					imgEnemy.rectTransform.sizeDelta.x, enemy / 20 * 100);
+
+				if (isAttack) {
+					
+					//attackVal = tempEnergy / numOfCats;
+					if (tempEnergy > 0)
+					{
+						//GameObject go = GameObject.Instantiate((1.0f/numOfCats).ToString(), GameObject.Find("Total Energy").transform.position, this.transform.localRotation) as GameObject;
+						//go.transform.position = Vector3(go.transform.position, GameObject.Find("Attack").transform.position, 100 * Time.deltaTime);
+
+						
+						if (numOfCats > 1)
+						{
+							attackVal += 1.0f/numOfCats;
+							tempEnergy -= 1.0f/numOfCats;
+						}
+					}
+				} else {
+					if (attackVal > 0)
+					{
+						if (numOfCats > 1)
+						{
+							attackVal -= 1.0f/numOfCats;
+							tempEnergy += 1.0f/numOfCats;
+						}
+					}
+				}
+				if (isEnergy) {
+					if (tempEnergy > 0)
+					{
+						txtEncharging.text = "Encharge energy with " + 1.0f/numOfCats + " points";
+						txtResult.text = "";
+						textClear = true;
+						txtResult.text = "Encharge energy with " + 1.0f/numOfCats + " points";
+						
+						if (numOfCats > 1)
+						{
+							energyVal += 1.0f/numOfCats;
+							tempEnergy -= 1.0f/numOfCats;
+						}
+					}
+				} else {
+					if (energyVal > 0)
+					{
+						if (numOfCats > 1)
+						{
+							energyVal -= 1.0f/numOfCats;
+							tempEnergy += 1.0f/numOfCats;
+						}
+					}
+				}
+				if (isEnpower) {
+					if (tempEnergy > 0)
+					{
+						
+						if (numOfCats > 1)
+						{
+							enpowerVal += 1.0f/numOfCats;
+							tempEnergy -= 1.0f/numOfCats;
+						}
+					}
+				} else {
+					if (enpowerVal > 0)
+					{
+						if (numOfCats > 1)
+						{
+							enpowerVal -= 1.0f/numOfCats;
+							tempEnergy += 1.0f/numOfCats;
+						}
+					}
+				}
+				if (isRepair) {
+					if (tempEnergy > 0)
+					{
+						
+						if (numOfCats > 1)
+						{
+							repairVal += 1.0f/numOfCats;
+							tempEnergy -= 1.0f/numOfCats;
+						}
+					}
+				} else {
+					if (repairVal > 0)
+					{
+						if (numOfCats > 1)
+						{
+							repairVal -= 1.0f/numOfCats;
+							tempEnergy += 1.0f/numOfCats;
+						}
+					}
+				}
 				
+				
+				totalEnergyVal += energyVal * .5f;
+
 				CheckVal();
 				RandomlyHarming();
 				Attack();
@@ -137,7 +266,15 @@ public class GameManager : MonoBehaviour {
 
 	void ShowUI ()
 	{
-		txtTotalEnergy.text = "Total Energy: " + totalEnergy.ToString ();
+
+		//if (tempEnergy > totalEnergyVal || tempEnergy == totalEnergyVal) {
+			txttempEnergy.text = "Total Energy: " + tempEnergy  + " = 5 + " + (totalEnergyVal).ToString () + " - " + (enpowerVal + energyVal + repairVal + attackVal).ToString();
+		//} else {
+		//	txttempEnergy.text = "Total Energy: " + 0.ToString () + " + " + (tempEnergy).ToString ();
+		//}
+
+			
+			//(tempEnergy - totalEnergyVal * .5f).ToString() + " + " + (totalEnergyVal * .5f).ToString();
 		txtDps.text = "DPS: " + dps.ToString ();
 		txtHp.text = "HP: " + hp.ToString ();
 		txtEnemy.text = "Enemy: " + enemy.ToString ();
@@ -151,20 +288,32 @@ public class GameManager : MonoBehaviour {
 		txtEnpowerVal.text = "Enpower: " + enpowerVal.ToString ();
 
 		txtAutoTurn.text = "Auto Turns " + autoEnergyTurn.ToString ();
+
+
 	}
 
 	void RandomlyHarming ()
 	{
 		Debug.Log("Attacked by Enemies");
 		if (Random.Range (0, 100) < 35) {
-			GameManager.hp -= Random.Range(10, 35);
+			float temp = Random.Range(10, 35);
+			txtBeingAttacked.text = "Harmed by enemies for " + temp.ToString() + " points";
+			txtResult.text = "";
+			textClear = true;
+			txtResult.text = "Harmed by enemies for " + temp.ToString() + " points";
+
+			GameManager.hp -= temp;
 		}
 	}
 	
 	void Attack ()
 	{
-		GameManager.enemy -= GameManager.dps * Random.Range (0, 10) / 20;
-		//GameManager.dps 
+		float temp = Random.Range (5, 10) / 8;
+		GameManager.enemy -= GameManager.dps * temp;
+		txtHarming.text = "Attack enemies for " + dps * temp + " points";
+		txtResult.text = "";
+		textClear = true;
+		txtResult.text = "Attack enemies for " + dps * temp + " points";
 	}
 
 	void CheckVal ()
@@ -172,11 +321,15 @@ public class GameManager : MonoBehaviour {
 		if (!isCatMode) {
 
 			GameManager.dps = GameObject.Find ("Attack").GetComponent<RoomManager> ().value;
-			GameManager.totalEnergy += GameObject.Find ("Energy").GetComponent<RoomManager> ().value * .5f;
+			GameManager.tempEnergy += GameObject.Find ("Energy").GetComponent<RoomManager> ().value * .5f;
 			if (GameObject.Find ("Enpower").GetComponent<RoomManager> ().value > GameObject.Find ("Enpower").GetComponent<RoomManager> ().minVal) {
 				GameObject.Find ("Enpower").GetComponent<RoomManager> ().value -= GameObject.Find ("Enpower").GetComponent<RoomManager> ().minVal;
-				GameManager.totalEnergy += GameObject.Find ("Enpower").GetComponent<RoomManager> ().minVal;
+				GameManager.tempEnergy += GameObject.Find ("Enpower").GetComponent<RoomManager> ().minVal;
 				GameManager.enemy -= 5;
+				txtEnpower.text = "Attack enemies with bonus: 5 points!";
+				txtResult.text = "";
+				textClear = true;
+				txtResult.text = "Attack enemies with bonus: 5 points!";
 			}	
 			if (GameManager.hp < 100) {
 				GameManager.hp += 5 * GameObject.Find ("Repair").GetComponent<RoomManager> ().value;
@@ -191,11 +344,15 @@ public class GameManager : MonoBehaviour {
 
 		} else {
 			GameManager.dps = attackVal;
-			GameManager.totalEnergy += energyVal * .5f;
+			GameManager.tempEnergy += energyVal * .5f;
 			if (enpowerVal > 3) {
 				enpowerVal -= 3;
-				GameManager.totalEnergy += 3;
+				GameManager.tempEnergy += 3;
 				GameManager.enemy -= 5;
+				txtEnpower.text = "Attack enemies with bonus: 5 points!";
+				txtResult.text = "";
+				textClear = true;
+				txtResult.text = "Attack enemies with bonus: 5 points!";
 			}	
 			if (GameManager.hp < 100) {
 				GameManager.hp += 5 * repairVal;
@@ -217,65 +374,19 @@ public class GameManager : MonoBehaviour {
 
 	public void EndCatTurn ()
 	{
-		if (isAttack) {
-			if (totalEnergy > 0)
-			{
-				attackVal++;
-				totalEnergy--;
-			}
-		} else {
-			if (attackVal > 0)
-			{
-				attackVal--;
-				totalEnergy++;
-			}
-		}
-		if (isEnergy) {
-			if (totalEnergy > 0)
-			{
-				energyVal++;
-				totalEnergy--;
-			}
-		} else {
-			if (energyVal > 0)
-			{
-				energyVal--;
-				totalEnergy++;
-			}
-		}
-		if (isEnpower) {
-			if (totalEnergy > 0)
-			{
-				enpowerVal++;
-				totalEnergy--;
-			}
-		} else {
-			if (enpowerVal > 0)
-			{
-				enpowerVal--;
-				totalEnergy++;
-			}
-		}
-		if (isRepair) {
-			if (totalEnergy > 0)
-			{
-				repairVal++;
-				totalEnergy--;
-			}
-		} else {
-			if (repairVal > 0)
-			{
-				repairVal--;
-				totalEnergy++;
-			}
-		}
+
+
 		isCatTurnEnd = true;
 		catTurn++;
+
+
 	}
 
 	public void CatModeSelection()
 	{
 		isCatMode = true;
+		//autoTurnEndTog.isOn = false;
+		autoEndTurn = false;
 
 		GamePanel.SetActive (true);
 		ModePanel.SetActive (false);

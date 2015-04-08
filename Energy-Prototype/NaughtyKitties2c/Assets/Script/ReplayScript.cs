@@ -32,7 +32,7 @@ public class ReplayScript : MonoBehaviour {
 		GameManager.hp = 100;
 		GameManager.dps = 0;
 		GameManager.enemy = 20;
-		GameManager.totalEnergy = 5;
+		GameManager.tempEnergy = 5;
 		GameManager.turn = 0;
 		GameManager.catTurn = 0;
 		GameManager.attackVal = 0;
